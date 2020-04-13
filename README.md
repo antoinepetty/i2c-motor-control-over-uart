@@ -1,9 +1,13 @@
 # i2c-motor-control-over-uart
-Controls multiple Rhino servo motors over i2c https://www.active-robots.com/dc-servo-motor-10rpm-uart-12c-ppm-drive.html
+Controls multiple Rhino servo motors https://www.active-robots.com/dc-servo-motor-10rpm-uart-12c-ppm-drive.html
 
-## Usage
+## Setup
+
+Set each motor to have a unique address (Incrementing 0-127) using its build-in UART command. Then connect all motors to the Arduino's i2c bus.
 
 Set the number of motors at the top of the INO file.
+
+## Usage
 
 Read a value with `[Motor number 0-127],[Command]` e.g. `0,R` which would return e.g. `3642`
 
