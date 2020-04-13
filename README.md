@@ -9,6 +9,8 @@ Set the number of motors at the top of the INO file.
 
 ## Usage
 
+Control this program over your Arduino's UART Serial connection.
+
 Read a value with `[Motor number 0-127],[Command]` e.g. `0,R` which would return e.g. `3642`
 
 Write a value with `[Motor number 0-127],[Command],[value]` e.g. `0,S,-200`
