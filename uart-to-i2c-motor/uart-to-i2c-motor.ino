@@ -165,7 +165,9 @@ void serialEvent() {
       inputString = "";
     }
     else {
-      inputString += inChar;
+      if(inChar != '\r'){
+        inputString += inChar;
+      }
     }
   }
 }
