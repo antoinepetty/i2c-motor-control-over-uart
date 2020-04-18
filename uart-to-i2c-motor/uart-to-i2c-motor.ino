@@ -2,9 +2,7 @@
 
 /* Configure connected motors */
 #define NUMBER_OF_MOTORS 2
-
-int[NUMBER_OF_MOTORS] motorAddress = {0x15,0x16};
-
+int motorAddress[NUMBER_OF_MOTORS] = {0x15,0x16};
 
 /* Array of all connected motors */
 RMCS220X motor[NUMBER_OF_MOTORS];
@@ -20,7 +18,7 @@ long commandValue = 0;
 void setup() {
   Serial.begin(9600);
   for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
-    motor[i].begin(motorAddress(i));
+    motor[i].begin(motorAddress[i]);
   }
 }
 
@@ -29,12 +27,12 @@ void loop() {
 }
 
 void writeToMotor(int motorIndex, String command, long value) {
-  /*Serial.print("Writing\nMotor: ");
-  Serial.println(motorIndex);
-  Serial.print("Command: ");
-  Serial.println(command);
-  Serial.print("Value: ");
-  Serial.println(value);*/
+  Serial.print("WRITING: Motor: ");
+  Serial.print(motorIndex);
+  Serial.print(" Command: ");
+  Serial.print(command);
+  Serial.print(" Value: ");
+  Serial.print(value);
   if(command == "S"){
     motor[motorIndex].writeSpeed(value);
   }
@@ -65,10 +63,10 @@ void writeToMotor(int motorIndex, String command, long value) {
 }
 
 void readFromMotor(int motorIndex, String command) {
-  /*Serial.print("Reading\nMotor: ");
-  Serial.println(motorIndex);
-  Serial.print("Command: ");
-  Serial.println(command);*/
+  Serial.print("READING: Motor: ");
+  Serial.print(motorIndex);
+  Serial.print(" Command: ");
+  Serial.println(command);
   long response = 0;
   if(command == "S"){
     response = motor[motorIndex].readSpeed();
