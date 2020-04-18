@@ -18,21 +18,34 @@ long commandValue = 0;
 void setup() {
   Serial.begin(9600);
   for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
+    Serial.print("Connecting to motor " + String(i) + " at address 0x");
+    Serial.println(motorAddress[i], HEX);
     motor[i].begin(motorAddress[i]);
   }
+  Serial.println("Ready for command");
 }
 
 void loop() {
   // Nothing in main loop, all controlled from SerialEvent
 }
 
+bool motorIndexInRange(int index){
+  return index >= 0 && index < NUMBER_OF_MOTORS;
+}
+
 void writeToMotor(int motorIndex, String command, long value) {
   Serial.print("WRITING: Motor: ");
   Serial.print(motorIndex);
+  Serial.print(" Address: 0x");
+  Serial.print(motorAddress[motorIndex], HEX);
   Serial.print(" Command: ");
   Serial.print(command);
   Serial.print(" Value: ");
-  Serial.print(value);
+  Serial.println(value);
+  if(!motorIndexInRange(motorIndex)){
+    Serial.println("Invalid motor index");
+    return;
+  }
   if(command == "S"){
     motor[motorIndex].writeSpeed(value);
   }
@@ -60,14 +73,24 @@ void writeToMotor(int motorIndex, String command, long value) {
   else if(command == "C"){
     motor[motorIndex].writeIGainTerm(value);
   }
+  else{
+    Serial.print("Invalid command: ");
+    Serial.println(command);
+  }
 }
 
 void readFromMotor(int motorIndex, String command) {
   Serial.print("READING: Motor: ");
   Serial.print(motorIndex);
+  Serial.print(" Address: 0x");
+  Serial.print(motorAddress[motorIndex], HEX);
   Serial.print(" Command: ");
   Serial.println(command);
   long response = 0;
+  if(!motorIndexInRange(motorIndex)){
+    Serial.println("Invalid motor index");
+    return response;
+  }
   if(command == "S"){
     response = motor[motorIndex].readSpeed();
   }
@@ -91,6 +114,10 @@ void readFromMotor(int motorIndex, String command) {
   }
   else if(command == "C"){
     response = motor[motorIndex].readIGainTerm();
+  }
+  else{
+    Serial.print("Invalid command: ");
+    Serial.println(command);
   }
   Serial.println(String(response));
 }
