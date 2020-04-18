@@ -34,7 +34,7 @@ bool motorIndexInRange(int index){
 }
 
 void writeToMotor(int motorIndex, String command, long value) {
-  Serial.print("WRITING: Motor: ");
+  Serial.print(" WRITING: Motor: ");
   Serial.print(motorIndex);
   Serial.print(" Address: 0x");
   Serial.print(motorAddress[motorIndex], HEX);
@@ -80,7 +80,7 @@ void writeToMotor(int motorIndex, String command, long value) {
 }
 
 void readFromMotor(int motorIndex, String command) {
-  Serial.print("READING: Motor: ");
+  Serial.print(" READING: Motor: ");
   Serial.print(motorIndex);
   Serial.print(" Address: 0x");
   Serial.print(motorAddress[motorIndex], HEX);
@@ -132,6 +132,7 @@ void serialEvent() {
     // get the new byte:
     char inChar = (char)Serial.read();
     if (inChar == ',' || inChar == '\n') {
+      Serial.print(inputString);
       if (messagePart == 0) {
         // Motor number
         motorNum = inputString.toInt();
