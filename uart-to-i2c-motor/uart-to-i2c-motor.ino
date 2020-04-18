@@ -1,18 +1,14 @@
 #include <RMCS-220X.h>
 
-/* Configure connected motors */
 #define NUMBER_OF_MOTORS 2
-
-int[NUMBER_OF_MOTORS] motorAddress = {0x15,0x16};
-
 
 /* Array of all connected motors */
 RMCS220X motor[NUMBER_OF_MOTORS];
 
-// Incoming command
 String inputString = ""; // a String to hold incoming data
 int messagePart = 0; // Which part of the message is currently being read
-// Incoming command parts
+
+// Incoming command
 int motorNum = 0;
 String command = "";
 long commandValue = 0;
@@ -20,7 +16,7 @@ long commandValue = 0;
 void setup() {
   Serial.begin(9600);
   for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
-    motor[i].begin(motorAddress(i));
+    motor[i].begin(i);
   }
 }
 
