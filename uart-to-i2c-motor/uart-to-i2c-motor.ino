@@ -127,6 +127,7 @@ void serialEvent() {
         motorNum = 0;
         command = "";
         commandValue = 0;
+        inputString = "";
         break;
       }
 
