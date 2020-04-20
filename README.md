@@ -15,7 +15,7 @@ Read a value with `[Motor number 0-127],[Command]` e.g. `0,R` which would return
 
 Write a value with `[Motor number 0-127],[Command],[value]` e.g. `0,S,-200` which would return the set value e.g. `-200`.
 
-In the case of any error, you will instead receive reponse `E`. You can see more detailed debugging information by setting debugMode = DEBUG_ON at the top of the file.
+In the case of any error, you will instead receive reponse `E`. You can see more detailed debugging information by setting `debugMode = DEBUG_ON` at the top of the file.
 
 ### Commands
 
