@@ -4,8 +4,16 @@
 #define NUMBER_OF_MOTORS 2
 int motorAddress[NUMBER_OF_MOTORS] = {0x15,0x16};
 
+/* Configure debugging mode */
+#define DEBUG_ON 1
+#define DEBUG_OFF 0
+byte debugMode = DEBUG_OFF;
+
 /* Array of all connected motors */
 RMCS220X motor[NUMBER_OF_MOTORS];
+
+/* Preset messages */
+static const String ERROR_MSG = "E";
 
 // Incoming command
 String inputString = ""; // a String to hold incoming data
@@ -18,11 +26,15 @@ long commandValue = 0;
 void setup() {
   Serial.begin(9600);
   for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
-    Serial.print("Connecting to motor " + String(i) + " at address 0x");
-    Serial.println(motorAddress[i], HEX);
+    if (debugMode == DEBUG_ON) {
+      Serial.print("Connecting to motor " + String(i) + " at address 0x");
+      Serial.println(motorAddress[i], HEX);
+    }
     motor[i].begin(motorAddress[i]);
   }
-  Serial.println("Ready for command");
+  if (debugMode == DEBUG_ON) {
+    debugMessage("Ready for command");
+  }
 }
 
 void loop() {
@@ -34,16 +46,21 @@ bool motorIndexInRange(int index){
 }
 
 void writeToMotor(int motorIndex, String command, long value) {
-  Serial.print(" WRITING: Motor: ");
-  Serial.print(motorIndex);
-  Serial.print(" Address: 0x");
-  Serial.print(motorAddress[motorIndex], HEX);
-  Serial.print(" Command: ");
-  Serial.print(command);
-  Serial.print(" Value: ");
-  Serial.println(value);
+  if (debugMode == DEBUG_ON) {
+    Serial.print(" WRITING: Motor: ");
+    Serial.print(motorIndex);
+    Serial.print(" Address: 0x");
+    Serial.print(motorAddress[motorIndex], HEX);
+    Serial.print(" Command: ");
+    Serial.print(command);
+    Serial.print(" Value: ");
+    Serial.println(value);
+  }
   if(!motorIndexInRange(motorIndex)){
-    Serial.println("Invalid motor index");
+    if (debugMode == DEBUG_ON) {
+      debugMessage("Invalid motor index");
+    }
+    sendResponse(ERROR_MSG);
     return;
   }
   if(command == "S"){
@@ -74,22 +91,31 @@ void writeToMotor(int motorIndex, String command, long value) {
     motor[motorIndex].writeIGainTerm(value);
   }
   else{
-    Serial.print("Invalid command: ");
-    Serial.println(command);
+    if (debugMode == DEBUG_ON) {
+      debugMessage("Invalid command: " + command);
+    }
+    sendResponse(ERROR_MSG);
+    return;
   }
+  sendResponse(String(value));
 }
 
 void readFromMotor(int motorIndex, String command) {
-  Serial.print(" READING: Motor: ");
-  Serial.print(motorIndex);
-  Serial.print(" Address: 0x");
-  Serial.print(motorAddress[motorIndex], HEX);
-  Serial.print(" Command: ");
-  Serial.println(command);
-  long response = 0;
+  if (debugMode == DEBUG_ON) {
+    Serial.print(" READING: Motor: ");
+    Serial.print(motorIndex);
+    Serial.print(" Address: 0x");
+    Serial.print(motorAddress[motorIndex], HEX);
+    Serial.print(" Command: ");
+    Serial.println(command);
+  }
+  long response = -1;
   if(!motorIndexInRange(motorIndex)){
-    Serial.println("Invalid motor index");
-    return response;
+    if (debugMode == DEBUG_ON) {
+      debugMessage("Invalid motor index");
+    }
+    sendResponse(ERROR_MSG);
+    return;
   }
   if(command == "S"){
     response = motor[motorIndex].readSpeed();
@@ -116,10 +142,21 @@ void readFromMotor(int motorIndex, String command) {
     response = motor[motorIndex].readIGainTerm();
   }
   else{
-    Serial.print("Invalid command: ");
-    Serial.println(command);
+    if (debugMode == DEBUG_ON) {
+      debugMessage("Invalid command: " + command);
+    }
+    sendResponse(ERROR_MSG);
+    return;
   }
-  Serial.println(String(response));
+  sendResponse(String(response));
+}
+
+void sendResponse(String responseMsg){
+  Serial.println(responseMsg);
+}
+
+void debugMessage(String message){
+  Serial.println("DEBUG: " + message);
 }
 
 /*
@@ -132,7 +169,9 @@ void serialEvent() {
     // get the new byte:
     char inChar = (char)Serial.read();
     if (inChar == ',' || inChar == '\n') {
-      Serial.print(inputString);
+      if (debugMode == DEBUG_ON) {
+        debugMessage("Incoming message: " + inputString);
+      }
       if (messagePart == 0) {
         // Motor number
         motorNum = inputString.toInt();
