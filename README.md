@@ -17,6 +17,8 @@ Write a value with `[Motor number 0-127],[Command],[value]` e.g. `0,S,-200` whic
 
 In the case of any error, you will instead receive reponse `E`. You can see more detailed debugging information by setting `debugMode = DEBUG_ON` at the top of the file.
 
+All of these messages are/need to be appended with a `\n` newline character.
+
 ### Commands
 
 | Command | Description                           |
